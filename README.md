@@ -4,7 +4,7 @@
 
 #### Challenges:
 - Limited internal storage (16GB)
-- Files stored under SD Card storage will not be executable
+- Files stored under SD Card storage are not executable
 
 ## Root your device
 Magisk - [link](https://github.com/topjohnwu/Magisk)
