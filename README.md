@@ -84,6 +84,10 @@ By default adb forward can only forward a device's port to a local port on the c
 ```sh
 sudo sysctl net.ipv4.conf.eth0.route_localnet=1
 sudo iptables -t nat -A PREROUTING -p tcp --dport 8022 -j DNAT --to-destination 127.0.0.1:8022
+
+# Persist the iptables rules
+sudo apt install iptables-persistent
+sudo dpkg-reconfigure iptables-persistent
 ```
 
 
