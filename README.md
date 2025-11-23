@@ -79,7 +79,7 @@ Connect via SSH
 ```sh
 ssh -p 8022 username@localhost
 ```
-By default adb forward can only forward a device's port to a local port on the computer. To allow access from anywhere in the LAN:
+By default adb forward can only forward a device's port to a local port on the computer. To allow access of port 8022 from anywhere in the LAN:
 ```sh
 sudo sysctl net.ipv4.conf.eth0.route_localnet=1
 sudo iptables -t nat -A PREROUTING -p tcp --dport 8022 -j DNAT --to-destination 127.0.0.1:8022
