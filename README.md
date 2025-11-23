@@ -2,7 +2,8 @@
 
 ### The following was tested on a Samsung Galaxy S5 Neo (SM-G903W) with LineageOS 18.1 (Android 11)
 
-#### Challenges:
+#### Challenges with Android (un-modified):
+- Charging cannot be capped to certain percentages when plugged in (Older Android version)
 - Limited internal storage (16GB)
 - Files stored under SD Card storage are not executable
 
