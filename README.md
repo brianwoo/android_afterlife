@@ -61,6 +61,12 @@ Magisk - [link](https://github.com/topjohnwu/Magisk)
   /system/xbin/su -c "/system/bin/chmod 755 /mnt/media_rw"
   # Optional: symlink usr to SD Card to save internal storage space
   #/system/bin/ln -sfn /mnt/media_rw/sdcard_ext/user_data/termux_usr /data/data/com.termux/files/usr
+
+  # Optional: setup an image file on the SD Card to hold mysql data
+  LOOP_DEV=$(/system/xbin/su -c "/system/bin/losetup -f")
+  /system/xbin/su -c "/system/bin/losetup $LOOP_DEV /sdcard/mysql_data.img"
+  /system/xbin/su -mm -c "/system/bin/mount -t ext4 -o rw,exec $LOOP_DEV /data/data/com.termux/files/home/mysql_data_dir"
+
   termux-wake-lock
   # Run Termux services at startup
   . $PREFIX/etc/profile
@@ -113,10 +119,25 @@ Install mariadb package
 Configure MariaDB's data directory:
 ```sh
 # Unfortunately, mariadb data files cannot reside on SD Card due to permission issues.
+# To workaround this issue, we can create a an image file on the SD Card and use this image partition as our MariaDB data files.
+# To create an image file (do this on the phone):
+truncate -s 10G /sdcard/mysql_data.img
+
+# Format this image as ext4 (for newer devices)
+mkfs.ext4 /sdcard/mysql_data.img
+
+# Alternatively, format this image as ext4 (for older 32-bit devices, like the S5 Neo)
+mkfs.ext4 -O ^metadata_csum,^64bit,^orphan_file,^extra_isize /sdcard/mysql_data.img
+
+# To mount the mysql_data.img as a loop device, I had to split the mount into the following lines to work:
+LOOP_DEV=$(/system/xbin/su -c "/system/bin/losetup -f")
+/system/xbin/su -c "/system/bin/losetup $LOOP_DEV /sdcard/mysql_data.img"
+/system/xbin/su -mm -c "/system/bin/mount -t ext4 -o rw,exec $LOOP_DEV /data/data/com.termux/files/home/mysql_data_dir"
+
 # Edit $PREFIX/etc/my.cnf
 [mysqld]
 bind-address = 0.0.0.0
-datadir=/data/data/com.termux/files/home/mysql_data
+datadir=/data/data/com.termux/files/home/mysql_data_dir/mysql_data
 disable_log_bin
 
 # Edit termux-services mysqld run: 
