@@ -133,6 +133,7 @@ mkfs.ext4 -O ^metadata_csum,^64bit,^orphan_file,^extra_isize /sdcard/mysql_data.
 LOOP_DEV=$(/system/xbin/su -c "/system/bin/losetup -f")
 /system/xbin/su -c "/system/bin/losetup $LOOP_DEV /sdcard/mysql_data.img"
 /system/xbin/su -mm -c "/system/bin/mount -t ext4 -o rw,exec $LOOP_DEV /data/data/com.termux/files/home/mysql_data_dir"
+/system/xbin/su -c "chown -R /data/data/com.termux/files/home/mysql_data_dir"
 
 # Edit $PREFIX/etc/my.cnf
 [mysqld]
