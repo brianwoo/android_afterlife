@@ -62,9 +62,9 @@ Magisk - [link](https://github.com/topjohnwu/Magisk)
   # Optional: symlink usr to SD Card to save internal storage space
   /system/bin/ln -sfn /mnt/media_rw/sdcard_ext/user_data/termux_usr /data/data/com.termux/files/usr
 
-  # Optional: setup an image file on the SD Card to hold mysql data (/sdcard is partition #2)
+  # Optional: setup an image file on the SD Card to hold mysql data
   LOOP_DEV=$(/system/xbin/su -c "/system/bin/losetup -f")
-  /system/xbin/su -c "/system/bin/losetup $LOOP_DEV /sdcard/mysql_data.img"
+  /system/xbin/su -c "/system/bin/losetup $LOOP_DEV /mnt/media_rw/sdcard_ext/mysql_data.img"
   /system/xbin/su -mm -c "/system/bin/mount -t ext4 -o rw,exec $LOOP_DEV /data/data/com.termux/files/home/mysql_data_dir"
 
   termux-wake-lock
@@ -121,17 +121,17 @@ Configure MariaDB's data directory:
 # Unfortunately, mariadb data files cannot reside on SD Card due to permission issues.
 # To workaround this issue, we can create a an image file on the SD Card and use this image partition as our MariaDB data files.
 # To create an image file (do this on the phone):
-truncate -s 10G /sdcard/mysql_data.img
+truncate -s 10G /mnt/media_rw/sdcard_ext/mysql_data.img
 
 # Format this image as ext4 (for newer devices)
-mkfs.ext4 /sdcard/mysql_data.img
+mkfs.ext4 /mnt/media_rw/sdcard_ext/mysql_data.img
 
 # Alternatively, format this image as ext4 (for older 32-bit devices, like the S5 Neo)
-mkfs.ext4 -O ^metadata_csum,^64bit,^orphan_file,^extra_isize /sdcard/mysql_data.img
+mkfs.ext4 -O ^metadata_csum,^64bit,^orphan_file,^extra_isize /mnt/media_rw/sdcard_ext/mysql_data.img
 
 # To mount the mysql_data.img as a loop device, I had to split the mount into the following lines to work:
 LOOP_DEV=$(/system/xbin/su -c "/system/bin/losetup -f")
-/system/xbin/su -c "/system/bin/losetup $LOOP_DEV /sdcard/mysql_data.img"
+/system/xbin/su -c "/system/bin/losetup $LOOP_DEV /mnt/media_rw/sdcard_ext/mysql_data.img"
 /system/xbin/su -mm -c "/system/bin/mount -t ext4 -o rw,exec $LOOP_DEV /data/data/com.termux/files/home/mysql_data_dir"
 /system/xbin/su -c "chown -R u0_111:u0_111 /data/data/com.termux/files/home/mysql_data_dir"
 
