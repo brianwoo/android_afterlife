@@ -161,3 +161,13 @@ Install Ubuntu distribution
 Login to the distribution with bind to user_data on SD Card
 - `pd login dev --termux-home --bind /mnt/media_rw/sdcard_ext/user_data:user_data`
 
+
+## Reboot / Shutdown
+If the phone is refused to reboot / shutdown, kill processes and umount the partition
+```sh
+pkill mariadbd
+sudo umount /data/user/0/com.termux/files/home/mysql_data_dir
+sudo umount /data_mirror/data_ce/null/0/com.termux/files/home/mysql_data_dir
+sudo umount /data/data/com.termux/files/home/mysql_data_dir
+```
+
