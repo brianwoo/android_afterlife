@@ -60,7 +60,7 @@ Magisk - [link](https://github.com/topjohnwu/Magisk)
   /system/xbin/su -c "/system/bin/mount -t f2fs /dev/block/mmcblk1p3 /mnt/media_rw/sdcard_ext"
   /system/xbin/su -c "/system/bin/chmod 755 /mnt/media_rw"
   # Optional: symlink usr to SD Card to save internal storage space
-  #/system/bin/ln -sfn /mnt/media_rw/sdcard_ext/user_data/termux_usr /data/data/com.termux/files/usr
+  /system/bin/ln -sfn /mnt/media_rw/sdcard_ext/user_data/termux_usr /data/data/com.termux/files/usr
 
   # Optional: setup an image file on the SD Card to hold mysql data (/sdcard is partition #2)
   LOOP_DEV=$(/system/xbin/su -c "/system/bin/losetup -f")
