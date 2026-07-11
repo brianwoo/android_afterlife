@@ -70,6 +70,14 @@ Magisk - [link](https://github.com/topjohnwu/Magisk)
   termux-wake-lock
   # Run Termux services at startup
   . $PREFIX/etc/profile
+
+  sleep 5
+  # start caddy, or other services...
+
+  # Disable the Android system to save memory and to run as a headless mode
+  sleep 5
+  /system/xbin/su -c "/system/bin/stop"
+  /system/xbin/su -c "/system/bin/settings put global max_cached_processes 3"
   ```
 - Make the script executable
   - `chmod +x $HOME/.termux/boot/startup.sh`
