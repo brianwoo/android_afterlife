@@ -23,7 +23,7 @@ Magisk - [link](https://github.com/topjohnwu/Magisk)
 - Find a bigger SD Card and format it from the phone, set it to external storage
 - Remove the SD Card and put it in Linux. Create a an image file (ext_disk.img)
   - truncate -s 10G ext_disk.img
-  - mkfs.ext4 ext_disk.img
+  - mkfs.ext4 -O ^metadata_csum,^64bit,^orphan_file,^extra_isize ext_disk.img  (need these extra flags for S5 Neo)
 
 ## Termux Setup
 - Open Termux app
@@ -37,7 +37,7 @@ Magisk - [link](https://github.com/topjohnwu/Magisk)
   - `sv-enable sshd`  
 - Mount the SD Card partition the first time
   ```sh
-  /system/xbin/su -c "/system/bin/mount -t f2fs /dev/block/mmcblk1p3 /mnt/media_rw/global_sd"
+  /system/xbin/su -c "/system/bin/mount -t exfat /dev/block/mmcblk1p1 /mnt/media_rw/global_sd"
 
   # Setup ownership and permissions
   /system/xbin/su -c "/system/bin/chown -R $(id -u):$(id -g) /mnt/media_rw/global_sd"
@@ -131,7 +131,7 @@ cp -r -p /data/data/com.termux/files/usr \
 Install mariadb package
 - `pkg install mariadb -y`
 
-Configure MariaDB's data directory:
+Configure MariaDB's data directory (This might not be needed anymore because we are using the external SD Card, than adaptive):
 ```sh
 # Unfortunately, mariadb data files cannot reside on SD Card due to permission issues.
 # To workaround this issue, we can create a an image file on the SD Card and use this image partition as our MariaDB data files.
@@ -145,9 +145,9 @@ mkfs.ext4 /mnt/media_rw/sdcard_ext/mysql_data.img
 mkfs.ext4 -O ^metadata_csum,^64bit,^orphan_file,^extra_isize /mnt/media_rw/sdcard_ext/mysql_data.img
 
 # To mount the mysql_data.img as a loop device, I had to split the mount into the following lines to work:
-LOOP_DEV=$(/system/xbin/su -c "/system/bin/losetup -f")
-/system/xbin/su -c "/system/bin/losetup $LOOP_DEV /mnt/media_rw/sdcard_ext/mysql_data.img"
-/system/xbin/su -mm -c "/system/bin/mount -t ext4 -o rw,exec $LOOP_DEV /data/data/com.termux/files/home/mysql_data_dir"
+LOOP_DEV=$(/system/xbin/su -t 1 -c "/system/bin/losetup -f")
+/system/xbin/su -t 1 -c "/system/bin/losetup $LOOP_DEV /mnt/media_rw/sdcard_ext/mysql_data.img"
+/system/xbin/su -t 1 -c "/system/bin/mount -t ext4 -o rw,exec $LOOP_DEV /data/data/com.termux/files/home/mysql_data_dir"
 /system/xbin/su -c "chown -R u0_111:u0_111 /data/data/com.termux/files/home/mysql_data_dir"
 
 # Edit $PREFIX/etc/my.cnf
@@ -155,6 +155,8 @@ LOOP_DEV=$(/system/xbin/su -c "/system/bin/losetup -f")
 bind-address = 0.0.0.0
 datadir=/data/data/com.termux/files/home/mysql_data_dir/mysql_data
 disable_log_bin
+innodb_buffer_pool_size = 64M
+performance_schema = OFF
 
 # Edit termux-services mysqld run: 
 # $PREFIX/var/service/mysqld
