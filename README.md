@@ -75,14 +75,14 @@ Magisk - [link](https://github.com/topjohnwu/Magisk)
   /system/xbin/su -c "/system/bin/stop bootanim"
   /system/xbin/su -c "/system/bin/stop media"
   /system/xbin/su -c "/system/bin/stop statsd"
+  /system/xbin/su -c "/system/bin/stop vendor.drm-hal-1-0"
   /system/xbin/su -c "/system/bin/pm hide com.android.systemui"
   /system/xbin/su -c "/system/bin/pm hide com.android.launcher3"
-  /system/xbin/su -c "/system/bin/pm hide com.android.phone"
-  /system/xbin/su -c "/system/bin/pm hide com.android.nfc"
-  /system/xbin/su -c "/system/bin/pm hide /system/bin/drmserver"
+  /system/xbin/su -c "/system/bin/pm disable com.android.inputmethod.latin"
+  /system/xbin/su -c "/system/bin/pm disable com.android.nfc"
   /system/xbin/su -c "/system/bin/settings put global max_cached_processes 1"
   /system/xbin/su -c "/system/bin/settings put system screen_brightness 0"
-  /system/xbin/su -c "/system/bin/input keyevent 26"
+  /system/xbin/su -c "/system/bin/sendevent /dev/input/event0 1 116 1 && /system/bin/sendevent /dev/input/event0 0 0 0 && /system/bin/sendevent /dev/input/event0 1 116 0 && /system/bin/sendevent /dev/input/event0 0 0 0"
 
   ```
   
