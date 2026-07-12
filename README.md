@@ -80,6 +80,8 @@ Magisk - [link](https://github.com/topjohnwu/Magisk)
   /system/xbin/su -c "/system/bin/pm hide com.android.launcher3"
   /system/xbin/su -c "/system/bin/pm disable com.android.inputmethod.latin"
   /system/xbin/su -c "/system/bin/pm disable com.android.nfc"
+  # Run this once to disable seedvault backup manager: bmgr enable false
+  /system/xbin/su -c "/system/bin/pm disable com.stevesoltys.seedvault"
   /system/xbin/su -c "/system/bin/settings put global max_cached_processes 1"
   /system/xbin/su -c "/system/bin/settings put system screen_brightness 0"
   /system/xbin/su -c "/system/bin/sendevent /dev/input/event0 1 116 1 && /system/bin/sendevent /dev/input/event0 0 0 0 && /system/bin/sendevent /dev/input/event0 1 116 0 && /system/bin/sendevent /dev/input/event0 0 0 0"
