@@ -56,29 +56,45 @@ Magisk - [link](https://github.com/topjohnwu/Magisk)
   #!/system/bin/sh
   # Disable SELinux enforcement and mount SD card partition (partition 3)
   /system/xbin/su -c "/system/bin/setenforce 0"
-  /system/xbin/su -c "/system/bin/mkdir /mnt/media_rw/sdcard_ext"
-  /system/xbin/su -c "/system/bin/mount -t f2fs /dev/block/mmcblk1p3 /mnt/media_rw/sdcard_ext"
-  /system/xbin/su -c "/system/bin/chmod 755 /mnt/media_rw"
-  # Optional: symlink usr to SD Card to save internal storage space
-  /system/bin/ln -sfn /mnt/media_rw/sdcard_ext/user_data/termux_usr /data/data/com.termux/files/usr
+  # Detach any stale loop controllers before mount globally without using Android vold
+  /system/xbin/su -t 1 -c "/system/bin/losetup -D" 2>/dev/null
+  /system/xbin/su -t 1 -c "/system/bin/mkdir -p /mnt/media_rw/global_sd"
+  /system/xbin/su -t 1 -c "/system/bin/mount -t vfat /dev/block/mmcblk1p1 /mnt/media_rw/global_sd" 2>/dev/null || \
+  /system/xbin/su -t 1 -c "/system/bin/mount -t exfat /dev/block/mmcblk1p1 /mnt/media_rw/global_sd"
 
-  # Optional: setup an image file on the SD Card to hold mysql data
-  LOOP_DEV=$(/system/xbin/su -c "/system/bin/losetup -f")
-  /system/xbin/su -c "/system/bin/losetup $LOOP_DEV /mnt/media_rw/sdcard_ext/mysql_data.img"
-  /system/xbin/su -mm -c "/system/bin/mount -t ext4 -o rw,exec $LOOP_DEV /data/data/com.termux/files/home/mysql_data_dir"
-
+  # Mount the image as a loopback
+  LOOP_DEV=$(/system/xbin/su -t 1 -c "/system/bin/losetup -f")
+  /system/xbin/su -t 1 -c "/system/bin/losetup $LOOP_DEV /mnt/media_rw/global_sd/ext_disk.img"
+  /system/xbin/su -t 1 -c "/system/bin/mount -t ext4 -o rw,exec $LOOP_DEV /data/data/com.termux/files/home/ext_disk"
+  
+  # Mount swap
+  /system/xbin/su -t 1 -c "/system/bin/swapon /data/data/com.termux/files/home/swapfile"
+  
+  # start services
   termux-wake-lock
-  # Run Termux services at startup
   . $PREFIX/etc/profile
-
+  
   sleep 5
-  # start caddy, or other services...
 
-  # Disable the Android system to save memory and to run as a headless mode
+  # Optional.... start Caddy, or other services....
+  caddy start --config /data/data/com.termux/files/home/ext_disk/Projects/Caddy/Caddyfile
+  
+  # Disable some services to save memory and to run as a headless mode (check with procrank)
   sleep 5
-  /system/xbin/su -c "/system/bin/stop"
-  /system/xbin/su -c "/system/bin/settings put global max_cached_processes 3"
+  /system/xbin/su -c "/system/bin/stop bootanim"
+  /system/xbin/su -c "/system/bin/stop media"
+  /system/xbin/su -c "/system/bin/stop statsd"
+  /system/xbin/su -c "/system/bin/pm hide com.android.systemui"
+  /system/xbin/su -c "/system/bin/pm hide com.android.launcher3"
+  /system/xbin/su -c "/system/bin/pm hide com.android.phone"
+  /system/xbin/su -c "/system/bin/pm hide com.android.nfc"
+  /system/xbin/su -c "/system/bin/pm hide /system/bin/drmserver"
+  /system/xbin/su -c "/system/bin/settings put global max_cached_processes 1"
+  /system/xbin/su -c "/system/bin/settings put system screen_brightness 0"
+  /system/xbin/su -c "/system/bin/input keyevent 26"
+
   ```
+  
 - Make the script executable
   - `chmod +x $HOME/.termux/boot/startup.sh`
 - Reboot the phone to test if the script works and the SD Card partition is mounted correctly.
