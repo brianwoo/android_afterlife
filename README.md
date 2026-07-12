@@ -20,19 +20,10 @@ Magisk - [link](https://github.com/topjohnwu/Magisk)
 
 ## SD Card for Extra Storage 
 - Samsung Galaxy S5 Neo only has 16GB internal storage
-- Find a 32GB SD Card and format it from the phone, set it to internal storage (adoptable storage)
-- Remove SD Card, insert into computer and dump a copy:
-  - `dd if=/dev/sdX of=sdcard_image.img bs=4M status=progress` (Linux)
-- Get a larger SD Card (64GB or 128GB), insert into computer and restore the image:
-  - `dd if=sdcard_image.img of=/dev/sdX bs=4M status=progress` (Linux)
-- 32GB of internal storage should now be available on the phone (partitions 1 and 2), the rest of the space on the SD Card can be used for Termux.
-- Create a partition on the remaining space (partition 3) and format it as f2fs:
-  - `mkfs.f2fs /dev/sdX3` (Linux)
-- Create a user_data directory in the F2FS partition.
-  - `mkdir -p /mnt/sdX3/user_data` (Linux)
-- Insert 128GB SD Card into phone
-- <strong>Note: Do not format the SD card from the phone and resize the partition (#2, it's encrypted), this will screw up the partition. App/data won't be able to move to the partition. Use a smaller SD Card to set it up initially and move the image to a bigger SD card as shown.</strong>
-  
+- Find a bigger SD Card and format it from the phone, set it to external storage
+- Remove the SD Card and put it in Linux. Create a an image file (ext_disk.img)
+  - truncate -s 10G ext_disk.img
+  - mkfs.ext4 ext_disk.img
 
 ## Termux Setup
 - Open Termux app
@@ -46,15 +37,15 @@ Magisk - [link](https://github.com/topjohnwu/Magisk)
   - `sv-enable sshd`  
 - Mount the SD Card partition the first time
   ```sh
-  /system/xbin/su -c "/system/bin/mount -t f2fs /dev/block/mmcblk1p3 /mnt/media_rw/sdcard_ext"
+  /system/xbin/su -c "/system/bin/mount -t f2fs /dev/block/mmcblk1p3 /mnt/media_rw/global_sd"
 
   # Setup ownership and permissions
-  /system/xbin/su -c "/system/bin/chown -R $(id -u):$(id -g) /mnt/media_rw/sdcard_ext/user_data"
+  /system/xbin/su -c "/system/bin/chown -R $(id -u):$(id -g) /mnt/media_rw/global_sd"
   ```
 - Create a startup script (startup.sh) for Termux:Boot
   ```sh
   #!/system/bin/sh
-  # Disable SELinux enforcement and mount SD card partition (partition 3)
+  # Disable SELinux enforcement and mount SD card partition
   /system/xbin/su -c "/system/bin/setenforce 0"
   # Detach any stale loop controllers before mount globally without using Android vold
   /system/xbin/su -t 1 -c "/system/bin/losetup -D" 2>/dev/null
