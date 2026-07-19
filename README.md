@@ -72,6 +72,8 @@ Magisk - [link](https://github.com/topjohnwu/Magisk)
   
   # Disable some services to save memory and to run as a headless mode (check with procrank)
   sleep 5
+  # To grep all the service's names
+  # grep -h '^service ' /system/etc/init/*.rc /vendor/etc/init/*.rc /init.rc
   /system/xbin/su -c "/system/bin/stop bootanim"
   /system/xbin/su -c "/system/bin/stop media"
   /system/xbin/su -c "/system/bin/stop statsd"
@@ -80,6 +82,10 @@ Magisk - [link](https://github.com/topjohnwu/Magisk)
   /system/xbin/su -c "/system/bin/pm hide com.android.launcher3"
   /system/xbin/su -c "/system/bin/pm disable com.android.inputmethod.latin"
   /system/xbin/su -c "/system/bin/pm disable com.android.nfc"
+  /system/xbin/su -c "/system/bin/pm disable org.lineageos.audiofx"
+  /system/xbin/su -c "/system/bin/pm disable org.lineageos.settings.doze"
+  /system/xbin/su -c "/system/bin/pm disable org.calyxos.backup.contacts"
+  /system/xbin/su -c "/system/bin/pm disable com.android.localtransport"
   # Run this once to disable seedvault backup manager: bmgr enable false
   /system/xbin/su -c "/system/bin/pm disable com.stevesoltys.seedvault"
   /system/xbin/su -c "/system/bin/settings put global max_cached_processes 1"
