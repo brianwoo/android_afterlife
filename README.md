@@ -78,6 +78,8 @@ Magisk - [link](https://github.com/topjohnwu/Magisk)
   /system/xbin/su -c "/system/bin/stop media"
   /system/xbin/su -c "/system/bin/stop statsd"
   /system/xbin/su -c "/system/bin/stop vendor.drm-hal-1-0"
+  /system/xbin/su -c "/system/bin/stop vendor.ir-hal-1-0"
+  /system/xbin/su -c "/system/bin/stop vendor.nfc_hal_service"
   /system/xbin/su -c "/system/bin/pm hide com.android.systemui"
   /system/xbin/su -c "/system/bin/pm hide com.android.launcher3"
   /system/xbin/su -c "/system/bin/pm disable com.android.inputmethod.latin"
