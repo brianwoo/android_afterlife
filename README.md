@@ -93,7 +93,9 @@ Magisk - [link](https://github.com/topjohnwu/Magisk)
   /system/xbin/su -c "/system/bin/settings put global max_cached_processes 1"
   /system/xbin/su -c "/system/bin/settings put system screen_brightness 0"
   /system/xbin/su -c "/system/bin/sendevent /dev/input/event0 1 116 1 && /system/bin/sendevent /dev/input/event0 0 0 0 && /system/bin/sendevent /dev/input/event0 1 116 0 && /system/bin/sendevent /dev/input/event0 0 0 0"
-
+  # Disable some non-harmful repeating messages
+  /system/xbin/su -c "/system/bin/setprop log.tag.FallbackHome SILENT"
+  /system/xbin/su -c "/system/bin/setprop log.tag.CameraManagerGlobal SILENT"
   ```
   
 - Make the script executable
